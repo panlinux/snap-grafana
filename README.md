@@ -4,5 +4,5 @@
 
 1. get the recipe `git clone https://github.com/CanonicalBootStack/snap-grafana`
 2. `cd snap-grafana`
-3. `snapcraft cleanbuild`
-4. `sudo snap install grafana_4.6.3*.snap --dangerous`
+3. `snapcraft build`
+4. `sudo snap install grafana_6.1.2*.snap --dangerous`
