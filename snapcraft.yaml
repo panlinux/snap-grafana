@@ -1,4 +1,4 @@
-name: grafana-ijohnson
+name: grafana
 version: 6.1.2
 summary: feature rich metrics dashboard and graph editor
 base: core18
@@ -23,7 +23,7 @@ parts:
   grafana:
     plugin: go
     source: https://github.com/grafana/grafana.git
-    source-tag: v6.1.2
+    source-tag: v${SNAPCRAFT_PROJECT_VERSION}
     source-depth: 1
     go-importpath: github.com/grafana/grafana
     build-packages: [build-essential, g++]
@@ -42,7 +42,7 @@ parts:
     plugin: nil
     source-type: git
     source: https://github.com/grafana/grafana.git
-    source-tag: v6.1.2
+    source-tag: v${SNAPCRAFT_PROJECT_VERSION}
     build-packages: [npm]
     override-build: |
       npm install --global yarn
