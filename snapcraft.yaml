@@ -14,12 +14,17 @@ apps:
     plugs: [network-bind, network]
     daemon: simple
 
+  grafana-cli:
+    command: 'bin/grafana-cli.wrapper'
+    plugs: [network-bind, network]
+
 parts:
   snap-wrappers:
     plugin: dump
     source: bin
     organize:
       grafana.wrapper: bin/grafana.wrapper
+      grafana-cli.wrapper: bin/grafana-cli.wrapper
   grafana:
     plugin: go
     source: https://github.com/grafana/grafana.git
@@ -36,6 +41,7 @@ parts:
         go run build.go build
         mkdir $SNAPCRAFT_PART_INSTALL/bin $SNAPCRAFT_PART_INSTALL/conf
         cp -p $SNAPCRAFT_PART_INSTALL/../go/bin/grafana-server $SNAPCRAFT_PART_INSTALL/bin/
+        cp -p $SNAPCRAFT_PART_INSTALL/../go/bin/grafana-cli $SNAPCRAFT_PART_INSTALL/bin/
         cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
   grafana-ui:
     after: [grafana]
