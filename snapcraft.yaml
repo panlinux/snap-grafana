@@ -1,6 +1,7 @@
 name: grafana
-version: 4.6.3
+version: 6.1.2
 summary: feature rich metrics dashboard and graph editor
+base: core18
 description: |
   Grafana is a feature rich metrics dashboard and graph editor for Cloudwatch,
   Elasticsearch, Graphite, InfluxDB, OpenTSB, Prometheus, and Hosted Metrics.
@@ -13,37 +14,58 @@ apps:
     plugs: [network-bind, network]
     daemon: simple
 
+  grafana-cli:
+    command: 'bin/grafana-cli.wrapper'
+    plugs: [network-bind, network]
+
 parts:
   snap-wrappers:
     plugin: dump
     source: bin
     organize:
       grafana.wrapper: bin/grafana.wrapper
+      grafana-cli.wrapper: bin/grafana-cli.wrapper
   go:
-    source-tag: go1.9.3
+    source-tag: go1.12
   grafana:
     after: [go]
     plugin: go
     source: https://github.com/grafana/grafana.git
-    source-tag: v4.6.3
+    source-tag: v${SNAPCRAFT_PROJECT_VERSION}
+    source-depth: 1
     go-importpath: github.com/grafana/grafana
-    build: |
+    build-packages: [build-essential, g++]
+    stage-packages:
+      - libfontconfig1
+      - libfreetype6
+    override-build: |
         cd ../go/src/github.com/grafana/grafana
         go run build.go setup
         go run build.go build
-    install: |
         mkdir $SNAPCRAFT_PART_INSTALL/bin $SNAPCRAFT_PART_INSTALL/conf
-        cp -p $SNAPCRAFT_PART_INSTALL/../go/bin/grafana-server $SNAPCRAFT_PART_INSTALL/bin/
+        cp -p $SNAPCRAFT_PART_INSTALL/../src/bin/*/grafana-server $SNAPCRAFT_PART_INSTALL/bin/
+        cp -p $SNAPCRAFT_PART_INSTALL/../src/bin/*/grafana-cli $SNAPCRAFT_PART_INSTALL/bin/
         cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
   grafana-ui:
-    after: [grafana]
+    after: [go,grafana]
     plugin: nodejs
     source-type: git
     source: https://github.com/grafana/grafana.git
-    source-tag: v4.6.3
-    node-engine: 6.11.4
+    source-tag: v${SNAPCRAFT_PROJECT_VERSION}
+    node-engine: 10.15.3
     node-package-manager: yarn
     node-packages: [grunt]
-    npm-run: [build]
-    install: |
-        cp -rf public $SNAPCRAFT_PART_INSTALL/public
+    npm-flags: [-W]
+    override-build: |
+      export GOPATH=$(realpath ../go)
+      # on arm, s390x, and ppc systems remove phantomjs as required from the
+      # package.json and yarn lock as it's not available from npm on those
+      # architectures
+      ARCH=$(uname -m)
+      case $ARCH in
+      aarch64|arm*|s390*|ppc*)
+        $SNAPCRAFT_PART_INSTALL/../npm/bin/yarn remove phantomjs-prebuilt --ignore-workspace-root-check;;
+      esac
+      $SNAPCRAFT_PART_INSTALL/../npm/bin/yarn install --pure-lockfile
+      go run build.go build-frontend
+      cp -rf public $SNAPCRAFT_PART_INSTALL/public
