@@ -6,6 +6,8 @@ addons:
   - core18
   - name: snapcraft
     classic: true
+  - name: multipass
+    classic: true
 
 script:
   - sudo apt update
