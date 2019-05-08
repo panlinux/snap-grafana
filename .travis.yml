@@ -1,16 +1,17 @@
 dist: xenial
 sudo: required
+before_install:
+  - sudo apt-get update
 addons:
   snaps:
   - core
   - core18
+  - lxd
   - name: snapcraft
     classic: true
-  - name: multipass
-    classic: true
-    channel: beta # not available in stable
+env:
+  - SNAPCRAFT_BUILD_ENVIRONMENT=lxd
 
 script:
-  - sudo apt update
-  - sudo snapcraft
+  - sudo snapcraft --destructive-mode
   - sudo snap install *.snap --dangerous
