@@ -8,6 +8,7 @@ addons:
     classic: true
   - name: multipass
     classic: true
+    channel: beta # not available in stable
 
 script:
   - sudo apt update
