@@ -4,7 +4,8 @@ addons:
   snaps:
   - core
   - core18
-  - snapcraft
+  - name: snapcraft
+    classic: true
 
 script:
   - sudo apt update
