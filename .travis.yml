@@ -1,5 +1,10 @@
-dist: bionic
+dist: xenial
 sudo: required
+addons:
+  snaps:
+  - core
+  - core18
+  - snapcraft
 
 script:
   - sudo apt update
