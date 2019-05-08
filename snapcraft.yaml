@@ -25,10 +25,7 @@ parts:
     organize:
       grafana.wrapper: bin/grafana.wrapper
       grafana-cli.wrapper: bin/grafana-cli.wrapper
-  go:
-    source-tag: go1.12
   grafana:
-    after: [go]
     plugin: go
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
@@ -47,7 +44,7 @@ parts:
         cp -p $SNAPCRAFT_PART_INSTALL/../src/bin/*/grafana-cli $SNAPCRAFT_PART_INSTALL/bin/
         cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
   grafana-ui:
-    after: [go,grafana]
+    after: [grafana]
     plugin: nodejs
     source-type: git
     source: https://github.com/grafana/grafana.git
