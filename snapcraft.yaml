@@ -45,10 +45,10 @@ parts:
         cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
   grafana-ui:
     after: [grafana]
-    plugin: nil
-    source-type: git
+    plugin: go
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
+    go-importpath: github.com/grafana/grafana
     build-packages: [npm]
     override-build: |
       npm install --global yarn
