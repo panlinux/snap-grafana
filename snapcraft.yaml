@@ -45,10 +45,10 @@ parts:
         cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
   grafana-ui:
     after: [grafana]
-    plugin: go
+    plugin: nil
+    source-type: git
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
-    go-importpath: github.com/grafana/grafana
     build-packages: [npm]
     override-build: |
       npm install --global yarn
@@ -61,5 +61,6 @@ parts:
         yarn remove phantomjs-prebuilt --ignore-workspace-root-check;;
       esac
       yarn install --pure-lockfile
-      go run build.go build-frontend
+      # go run build.go build-frontend
+      node_modules/.bin/grunt build --force
       cp -rf public $SNAPCRAFT_PART_INSTALL/public
