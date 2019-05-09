@@ -13,5 +13,6 @@ env:
   - SNAPCRAFT_BUILD_ENVIRONMENT=lxd
 
 script:
+  - sudo lxd.migrate -yes
   - sudo snapcraft
   - sudo snap install *.snap --dangerous
