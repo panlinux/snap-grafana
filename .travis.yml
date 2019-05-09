@@ -6,13 +6,16 @@ addons:
   snaps:
   - core
   - core18
-  # - lxd # will require a storage pool to be created first
+  - lxd
   - name: snapcraft
     classic: true
 env:
   - SNAPCRAFT_BUILD_ENVIRONMENT=lxd
 
 script:
+  # (Note): lxd will require a storage pool to be created afterwards
   # - sudo lxd.migrate -yes
-  - sudo snapcraft
+  # (Note): if destructive flag is not set,
+  # Support for 'LXD' needs to be set up. Would you like to do that it now? [y/N]:
+  - sudo snapcraft --destructive-mode
   - sudo snap install *.snap --dangerous
