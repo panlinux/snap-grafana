@@ -25,10 +25,7 @@ parts:
     organize:
       grafana.wrapper: bin/grafana.wrapper
       grafana-cli.wrapper: bin/grafana-cli.wrapper
-  go:
-    source-tag: go1.12
   grafana:
-    after: [go]
     plugin: go
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
@@ -47,25 +44,23 @@ parts:
         cp -p $SNAPCRAFT_PART_INSTALL/../src/bin/*/grafana-cli $SNAPCRAFT_PART_INSTALL/bin/
         cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
   grafana-ui:
-    after: [go,grafana]
-    plugin: nodejs
+    after: [grafana]
+    plugin: nil
     source-type: git
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
-    node-engine: 10.15.3
-    node-package-manager: yarn
-    node-packages: [grunt]
-    npm-flags: [-W]
+    build-packages: [npm]
     override-build: |
-      export GOPATH=$(realpath ../go)
+      npm install --global yarn
       # on arm, s390x, and ppc systems remove phantomjs as required from the
       # package.json and yarn lock as it's not available from npm on those
       # architectures
       ARCH=$(uname -m)
       case $ARCH in
       aarch64|arm*|s390*|ppc*)
-        $SNAPCRAFT_PART_INSTALL/../npm/bin/yarn remove phantomjs-prebuilt --ignore-workspace-root-check;;
+        yarn remove phantomjs-prebuilt --ignore-workspace-root-check;;
       esac
-      $SNAPCRAFT_PART_INSTALL/../npm/bin/yarn install --pure-lockfile
-      go run build.go build-frontend
+      yarn install --pure-lockfile
+      # go run build.go build-frontend
+      node_modules/.bin/grunt build --force
       cp -rf public $SNAPCRAFT_PART_INSTALL/public
