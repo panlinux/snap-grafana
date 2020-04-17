@@ -1,5 +1,5 @@
 name: grafana
-version: 6.2.1
+version: 6.7.2
 summary: feature rich metrics dashboard and graph editor
 base: core18
 description: |
@@ -32,26 +32,27 @@ parts:
     source-depth: 1
     go-importpath: github.com/grafana/grafana
     build-packages: [build-essential, g++]
-    stage-packages:
-      - libfontconfig1
-      - libfreetype6
+    stage-packages: [libfontconfig1, libfreetype6]
     override-build: |
-        cd ../go/src/github.com/grafana/grafana
+        mkdir ${SNAPCRAFT_PART_INSTALL}/bin ${SNAPCRAFT_PART_INSTALL}/conf
+        cd ${SNAPCRAFT_PART_BUILD}
         go run build.go setup
         go run build.go build
-        mkdir $SNAPCRAFT_PART_INSTALL/bin $SNAPCRAFT_PART_INSTALL/conf
-        cp -p $SNAPCRAFT_PART_INSTALL/../src/bin/*/grafana-server $SNAPCRAFT_PART_INSTALL/bin/
-        cp -p $SNAPCRAFT_PART_INSTALL/../src/bin/*/grafana-cli $SNAPCRAFT_PART_INSTALL/bin/
-        cp -p $SNAPCRAFT_PART_INSTALL/../src/conf/defaults.ini $SNAPCRAFT_PART_INSTALL/conf/
+        cp -p ${SNAPCRAFT_PART_BUILD}/bin/*/grafana-server \
+          ${SNAPCRAFT_PART_BUILD}/bin/*/grafana-cli \
+          ${SNAPCRAFT_PART_INSTALL}/bin/
+        cp -p ${SNAPCRAFT_PART_BUILD}/conf/defaults.ini ${SNAPCRAFT_PART_INSTALL}/conf/
   grafana-ui:
     after: [grafana]
-    plugin: nil
+    plugin: nodejs
     source-type: git
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
-    build-packages: [npm]
+    nodejs-version: '12.16.2'
+    nodejs-package-manager: yarn
     override-build: |
-      npm install --global yarn
+      export PATH=${SNAPCRAFT_PART_BUILD}/../npm/bin:$PATH
+      yarn upgrade
       # on arm, s390x, and ppc systems remove phantomjs as required from the
       # package.json and yarn lock as it's not available from npm on those
       # architectures
@@ -61,6 +62,5 @@ parts:
         yarn remove phantomjs-prebuilt --ignore-workspace-root-check;;
       esac
       yarn install --pure-lockfile
-      # go run build.go build-frontend
-      node_modules/.bin/grunt build --force
-      cp -rf public $SNAPCRAFT_PART_INSTALL/public
+      ${SNAPCRAFT_PART_BUILD}/node_modules/.bin/grunt build --force
+      cp -rf public ${SNAPCRAFT_PART_INSTALL}/public
