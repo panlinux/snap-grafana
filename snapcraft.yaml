@@ -1,5 +1,5 @@
 name: grafana
-version: 6.7.3
+version: 7.0.0
 summary: feature rich metrics dashboard and graph editor
 base: core18
 description: |
@@ -36,8 +36,8 @@ parts:
     override-build: |
         mkdir ${SNAPCRAFT_PART_INSTALL}/bin ${SNAPCRAFT_PART_INSTALL}/conf
         cd ${SNAPCRAFT_PART_BUILD}
-        go run build.go setup
-        go run build.go build
+        GO111MODULE=on go run build.go setup
+        GO111MODULE=on go run build.go build
         cp -p ${SNAPCRAFT_PART_BUILD}/bin/*/grafana-server \
           ${SNAPCRAFT_PART_BUILD}/bin/*/grafana-cli \
           ${SNAPCRAFT_PART_INSTALL}/bin/
@@ -48,19 +48,11 @@ parts:
     source-type: git
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
-    nodejs-version: '12.16.2'
+    nodejs-version: '12.16.3'
     nodejs-package-manager: yarn
     override-build: |
       export PATH=${SNAPCRAFT_PART_BUILD}/../npm/bin:$PATH
-      yarn upgrade
-      # on arm, s390x, and ppc systems remove phantomjs as required from the
-      # package.json and yarn lock as it's not available from npm on those
-      # architectures
-      ARCH=$(uname -m)
-      case $ARCH in
-      aarch64|arm*|s390*|ppc*)
-        yarn remove phantomjs-prebuilt --ignore-workspace-root-check;;
-      esac
-      yarn install --pure-lockfile
-      ${SNAPCRAFT_PART_BUILD}/node_modules/.bin/grunt build --force
+      yarn install --pure-lockfile --no-progress
+      ${SNAPCRAFT_PART_BUILD}/node_modules/.bin/grunt build
       cp -rf public ${SNAPCRAFT_PART_INSTALL}/public
+      cp -rf tools ${SNAPCRAFT_PART_INSTALL}/tools
