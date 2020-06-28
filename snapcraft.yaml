@@ -7,6 +7,11 @@ description: |
   Elasticsearch, Graphite, InfluxDB, OpenTSB, Prometheus, and Hosted Metrics.
 confinement: strict
 grade: stable
+architectures:
+  - build-on: s390x
+  - build-on: ppc64el
+  - build-on: arm64
+  - build-on: amd64
 
 apps:
   grafana:
