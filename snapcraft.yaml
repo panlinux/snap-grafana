@@ -55,7 +55,9 @@ parts:
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
     nodejs-version: '12.18.0'
     nodejs-package-manager: yarn
+    build-packages: [python-minimal,python-dev]
     override-build: |
+      export PYTHON=/usr/bin/python2
       export PATH=${SNAPCRAFT_PART_BUILD}/../npm/bin:$PATH
       yarn install --pure-lockfile --no-progress
       ${SNAPCRAFT_PART_BUILD}/node_modules/.bin/grunt build
