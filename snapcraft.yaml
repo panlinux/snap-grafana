@@ -7,6 +7,11 @@ description: |
   Elasticsearch, Graphite, InfluxDB, OpenTSB, Prometheus, and Hosted Metrics.
 confinement: strict
 grade: stable
+architectures:
+  - build-on: s390x
+  - build-on: ppc64el
+  - build-on: arm64
+  - build-on: amd64
 
 apps:
   grafana:
@@ -50,7 +55,9 @@ parts:
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
     nodejs-version: '12.18.0'
     nodejs-package-manager: yarn
+    build-packages: [python-minimal,python-dev]
     override-build: |
+      export PYTHON=/usr/bin/python2
       export PATH=${SNAPCRAFT_PART_BUILD}/../npm/bin:$PATH
       yarn install --pure-lockfile --no-progress
       ${SNAPCRAFT_PART_BUILD}/node_modules/.bin/grunt build
