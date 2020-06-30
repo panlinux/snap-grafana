@@ -1,5 +1,5 @@
 name: grafana
-version: 7.0.3
+version: 7.0.5
 summary: feature rich metrics dashboard and graph editor
 base: core18
 description: |
