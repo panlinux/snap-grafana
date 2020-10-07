@@ -39,7 +39,7 @@ parts:
     stage-packages: [libfontconfig1, libfreetype6]
     override-build: |
         snapcraftctl build
-        mkdir ${SNAPCRAFT_PART_INSTALL}/bin ${SNAPCRAFT_PART_INSTALL}/conf
+        mkdir -p ${SNAPCRAFT_PART_INSTALL}/bin ${SNAPCRAFT_PART_INSTALL}/conf
         cd ${SNAPCRAFT_PART_BUILD}
         GO111MODULE=on go run build.go setup
         GO111MODULE=on go run build.go build
