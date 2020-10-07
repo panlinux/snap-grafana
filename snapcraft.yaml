@@ -38,6 +38,7 @@ parts:
     build-packages: [build-essential, g++]
     stage-packages: [libfontconfig1, libfreetype6]
     override-build: |
+        set -x
         snapcraftctl build
         mkdir -p ${SNAPCRAFT_PART_INSTALL}/bin ${SNAPCRAFT_PART_INSTALL}/conf
         cd ${SNAPCRAFT_PART_BUILD}
