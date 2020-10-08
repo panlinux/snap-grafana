@@ -54,7 +54,7 @@ parts:
     source-type: git
     source: https://github.com/grafana/grafana.git
     source-tag: v${SNAPCRAFT_PROJECT_VERSION}
-    nodejs-version: '12.18.0'
+    npm-node-version: '12.18.3'
     build-packages: [python2-minimal,python2-dev]
     override-build: |
       set -x
